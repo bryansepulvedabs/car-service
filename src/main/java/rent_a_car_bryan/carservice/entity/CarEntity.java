@@ -6,13 +6,13 @@ import lombok.Data;
 @Entity
 @Table(name = "cars")
 @Data
-public class carEntity {
+public class CarEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column (nullable = false, unique = true)
-    private String patent;
+    private String licensePlate;
 
     @Column (nullable = false)
     private String brand;
@@ -25,11 +25,13 @@ public class carEntity {
 
     private String color;
 
-    @Column (nullable = false)
-    private String category;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Categoria category;
 
-    @Column (nullable = false)
-    private String fuel;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Combustible fuel;
 
     @Column (nullable = false)
     private Integer seats;
@@ -40,9 +42,8 @@ public class carEntity {
     @Column (nullable = false)
     private String availability;
 
-
-
-
+    @Column(nullable = false)
+    private Long dailyRate;
 
 
 }
