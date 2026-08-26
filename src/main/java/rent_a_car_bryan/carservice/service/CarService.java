@@ -17,6 +17,11 @@ public class CarService {
         return carRepository.findAll();
     }
 
+    public CarEntity findById(Long id){
+        return carRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException( "Auto no encontrado con id : " + id));
+    }
+
     public CarEntity findByLicensePLate (String licensePlate){
         return carRepository.findByLicensePlate(licensePlate)
                 .orElseThrow(() -> new RuntimeException( "Auto no encontrado con patente: " + licensePlate));

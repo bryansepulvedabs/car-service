@@ -21,6 +21,11 @@ public class CarController {
         return carService.findAll();
     }
 
+    @GetMapping("/id/{id}")
+    public CarEntity findById(@PathVariable Long id){
+        return carService.findById(id);
+    }
+
     @GetMapping("/plate/{licensePlate}")
     public CarEntity findByLicensePlate(@PathVariable String licensePlate){
         return carService.findByLicensePLate(licensePlate);
