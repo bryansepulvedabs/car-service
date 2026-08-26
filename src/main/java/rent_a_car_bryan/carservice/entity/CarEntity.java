@@ -40,7 +40,7 @@ public class CarEntity {
     private Integer mileage;
 
     @Column (nullable = false)
-    private String availability;
+    private Boolean availability;
 
     @Column(nullable = false)
     private Long dailyRate;
