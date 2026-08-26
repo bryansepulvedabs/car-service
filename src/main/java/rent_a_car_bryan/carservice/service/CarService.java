@@ -30,4 +30,27 @@ public class CarService {
     public CarEntity save(CarEntity car){
         return carRepository.save(car);
     }
+
+    public CarEntity update(Long id, CarEntity carUpdate){
+        CarEntity existentCar = findById(id);
+
+        existentCar.setLicensePlate(carUpdate.getLicensePlate());
+        existentCar.setBrand(carUpdate.getBrand());
+        existentCar.setModel(carUpdate.getModel());
+        existentCar.setYear(carUpdate.getYear());
+        existentCar.setColor(carUpdate.getColor());
+        existentCar.setCategory(carUpdate.getCategory());
+        existentCar.setFuel(carUpdate.getFuel());
+        existentCar.setSeats(carUpdate.getSeats());
+        existentCar.setMileage(carUpdate.getMileage());
+        existentCar.setAvailability(carUpdate.getAvailability());
+        existentCar.setDailyRate(carUpdate.getDailyRate());
+
+        return carRepository.save(carUpdate);
+    }
+
+    public void deleteById(Long id){
+        CarEntity car = findById(id);
+        carRepository.deleteById(car.getId());
+    }
 }
