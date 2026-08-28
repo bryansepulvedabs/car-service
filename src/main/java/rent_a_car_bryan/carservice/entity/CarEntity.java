@@ -27,11 +27,11 @@ public class CarEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Categoria category;
+    private EnumCategory category;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Combustible fuel;
+    private EnumFuel fuel;
 
     @Column (nullable = false)
     private Integer seats;

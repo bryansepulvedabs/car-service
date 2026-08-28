@@ -1,8 +1,8 @@
 package rent_a_car_bryan.carservice.dto;
 
 import lombok.Data;
-import rent_a_car_bryan.carservice.entity.Categoria;
-import rent_a_car_bryan.carservice.entity.Combustible;
+import rent_a_car_bryan.carservice.entity.EnumCategory;
+import rent_a_car_bryan.carservice.entity.EnumFuel;
 
 @Data
 public class CarRequestDTO {
@@ -11,8 +11,8 @@ public class CarRequestDTO {
     private String model;
     private Integer year;
     private String color;
-    private Categoria category;
-    private Combustible fuel;
+    private EnumCategory category;
+    private EnumFuel fuel;
     private Integer seats;
     private Integer mileage;
     private Long dailyRate;
