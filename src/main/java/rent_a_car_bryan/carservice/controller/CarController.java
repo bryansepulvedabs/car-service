@@ -3,6 +3,7 @@ package rent_a_car_bryan.carservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rent_a_car_bryan.carservice.dto.CarRequestDTO;
 import rent_a_car_bryan.carservice.dto.CarResponseDTO;
@@ -47,5 +48,12 @@ public class CarController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id){
         carService.deleteById(id);
+    }
+
+    @PatchMapping("/{id}/availability")
+    public CarResponseDTO updateAvailability(
+            @PathVariable Long id,
+            @RequestParam boolean available) {
+        return carService.updateAvailability(id, available);
     }
 }

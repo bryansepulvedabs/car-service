@@ -100,4 +100,11 @@ public class CarService {
         dto.setDailyRate(car.getDailyRate());
         return dto;
     }
+
+    public CarResponseDTO updateAvailability(Long id, boolean available) {
+        CarEntity car = findEntityById(id);
+        car.setAvailability(available);
+        CarEntity updatedCar = carRepository.save(car);
+        return toResponseDTO(updatedCar);
+    }
 }
