@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import rent_a_car_bryan.carservice.dto.CarRequestDTO;
 import rent_a_car_bryan.carservice.dto.CarResponseDTO;
 import rent_a_car_bryan.carservice.entity.CarEntity;
+import rent_a_car_bryan.carservice.exception.ResourceNotFoundException;
 import rent_a_car_bryan.carservice.repository.CarRepository;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class CarService {
 
     public CarResponseDTO findByLicensePLate (String licensePlate){
         CarEntity car = carRepository.findByLicensePlate(licensePlate)
-                .orElseThrow(() -> new RuntimeException( "Auto no encontrado con patente: " + licensePlate));
+                .orElseThrow(() -> new ResourceNotFoundException( "Auto no encontrado con patente: " + licensePlate));
         return toResponseDTO(car);
     }
 
@@ -65,7 +66,7 @@ public class CarService {
 
     private CarEntity findEntityById(Long id){
         return carRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException( "Auto no encontrado con id : " + id));
+                .orElseThrow(() -> new ResourceNotFoundException( "Auto no encontrado con id : " + id));
     }
 
     private CarEntity toEntity(CarRequestDTO dto){
