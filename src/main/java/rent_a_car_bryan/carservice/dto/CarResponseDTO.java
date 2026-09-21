@@ -19,4 +19,8 @@ public class CarResponseDTO {
     private Integer mileage;
     private Boolean availability;
     private Long dailyRate;
+    private String imageUrl;
+    private String imagePhotographer;
+    private String imagePhotographerUrl;
+    private String imageSourceUrl;
 }

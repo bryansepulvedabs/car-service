@@ -10,6 +10,7 @@ import rent_a_car_bryan.carservice.dto.CarResponseDTO;
 import rent_a_car_bryan.carservice.service.CarService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cars")
@@ -55,5 +56,11 @@ public class CarController {
             @PathVariable Long id,
             @RequestParam boolean available) {
         return carService.updateAvailability(id, available);
+    }
+
+    // Rellena con fotos de Pexels los autos que no tienen imagen (por ejemplo, los del data.sql)
+    @PostMapping("/images/refresh")
+    public Map<String, Integer> refreshImages() {
+        return Map.of("updated", carService.refreshMissingImages());
     }
 }

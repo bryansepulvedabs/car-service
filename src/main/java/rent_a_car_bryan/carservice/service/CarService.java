@@ -1,7 +1,9 @@
 package rent_a_car_bryan.carservice.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import rent_a_car_bryan.carservice.client.PexelsClient;
 import rent_a_car_bryan.carservice.dto.CarRequestDTO;
 import rent_a_car_bryan.carservice.dto.CarResponseDTO;
 import rent_a_car_bryan.carservice.entity.CarEntity;
@@ -10,11 +12,13 @@ import rent_a_car_bryan.carservice.repository.CarRepository;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CarService {
 
     private final CarRepository carRepository;
+    private final PexelsClient pexelsClient;
 
     public List<CarResponseDTO> findAll (){
         return carRepository.findAll()
@@ -37,12 +41,16 @@ public class CarService {
     public CarResponseDTO save(CarRequestDTO carRequestDTO){
         CarEntity car = toEntity(carRequestDTO);
         car.setAvailability(true);
+        assignImage(car);
         CarEntity savedCar = carRepository.save(car);
         return toResponseDTO(savedCar);
     }
 
     public CarResponseDTO update(Long id, CarRequestDTO carRequestDTO){
         CarEntity existentCar = findEntityById(id);
+        boolean brandOrModelChanged =
+                !existentCar.getBrand().equals(carRequestDTO.getBrand())
+                        || !existentCar.getModel().equals(carRequestDTO.getModel());
 
         existentCar.setLicensePlate(carRequestDTO.getLicensePlate());
         existentCar.setBrand(carRequestDTO.getBrand());
@@ -54,6 +62,10 @@ public class CarService {
         existentCar.setSeats(carRequestDTO.getSeats());
         existentCar.setMileage(carRequestDTO.getMileage());
         existentCar.setDailyRate(carRequestDTO.getDailyRate());
+
+        if (brandOrModelChanged) {
+            assignImage(existentCar);
+        }
 
         CarEntity updatedCar = carRepository.save(existentCar);
         return toResponseDTO(updatedCar);
@@ -99,6 +111,10 @@ public class CarService {
         dto.setMileage(car.getMileage());
         dto.setAvailability(car.getAvailability());
         dto.setDailyRate(car.getDailyRate());
+        dto.setImageUrl(car.getImageUrl());
+        dto.setImagePhotographer(car.getImagePhotographer());
+        dto.setImagePhotographerUrl(car.getImagePhotographerUrl());
+        dto.setImageSourceUrl(car.getImageSourceUrl());
         return dto;
     }
 
@@ -107,5 +123,39 @@ public class CarService {
         car.setAvailability(available);
         CarEntity updatedCar = carRepository.save(car);
         return toResponseDTO(updatedCar);
+    }
+
+    /**
+     * Busca imagen en Pexels para todos los autos que aún no tienen una.
+     * Devuelve cuántos autos quedaron con imagen.
+     */
+    public int refreshMissingImages() {
+        List<CarEntity> withoutImage = carRepository.findAll()
+                .stream()
+                .filter(car -> car.getImageUrl() == null)
+                .toList();
+
+        int updated = 0;
+        for (CarEntity car : withoutImage) {
+            if (assignImage(car)) {
+                carRepository.save(car);
+                updated++;
+            }
+        }
+        log.info("Imágenes asignadas: {} de {} autos sin imagen", updated, withoutImage.size());
+        return updated;
+    }
+
+    // Devuelve true si encontró una foto y la asignó al auto
+    private boolean assignImage(CarEntity car) {
+        return pexelsClient.searchCarPhoto(car.getBrand(), car.getModel(), car.getYear())
+                .map(photo -> {
+                    car.setImageUrl(photo.src().landscape());
+                    car.setImagePhotographer(photo.photographer());
+                    car.setImagePhotographerUrl(photo.photographerUrl());
+                    car.setImageSourceUrl(photo.url());
+                    return true;
+                })
+                .orElse(false);
     }
 }

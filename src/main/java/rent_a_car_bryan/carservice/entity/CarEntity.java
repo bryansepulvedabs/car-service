@@ -45,5 +45,17 @@ public class CarEntity {
     @Column(nullable = false)
     private Long dailyRate;
 
+    // Imagen obtenida desde Pexels + datos de atribución
+    @Column(length = 500)
+    private String imageUrl;
+
+    private String imagePhotographer;
+
+    @Column(length = 500)
+    private String imagePhotographerUrl;
+
+    @Column(length = 500)
+    private String imageSourceUrl;
+
 
 }
