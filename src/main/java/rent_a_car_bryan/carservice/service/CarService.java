@@ -20,8 +20,8 @@ public class CarService {
     private final CarRepository carRepository;
     private final PexelsClient pexelsClient;
 
-    public List<CarResponseDTO> findAll (){
-        return carRepository.findAll()
+    public List<CarResponseDTO> findAll(){
+        return carRepository.findAllByOrderByIdAsc()
                 .stream()
                 .map(this::toResponseDTO)
                 .toList();
@@ -130,7 +130,7 @@ public class CarService {
      * Devuelve cuántos autos quedaron con imagen.
      */
     public int refreshMissingImages() {
-        List<CarEntity> withoutImage = carRepository.findAll()
+        List<CarEntity> withoutImage = carRepository.findAllByOrderByIdAsc()
                 .stream()
                 .filter(car -> car.getImageUrl() == null)
                 .toList();
