@@ -66,11 +66,11 @@ public class PexelsClient {
      * Nunca lanza excepción: si Pexels falla o no hay resultados, devuelve Optional.empty()
      * para que crear o actualizar un auto no dependa de un servicio externo.
      */
-    public Optional<PexelsPhoto> searchCarPhoto(String brand, String model, Integer year) {
+    public Optional<PexelsPhoto> searchCarPhoto(String brand, String model, Integer year, String color) {
         if (!enabled) {
             return Optional.empty();
         }
-        String query = brand + " " + model + " " + year + " car";
+        String query = brand + " " + model + " " + year + " car" + " " + color;
         try {
             PexelsSearchResponse response = restClient.get()
                     .uri(uri -> uri.path("/search")

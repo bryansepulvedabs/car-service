@@ -148,7 +148,7 @@ public class CarService {
 
     // Devuelve true si encontró una foto y la asignó al auto
     private boolean assignImage(CarEntity car) {
-        return pexelsClient.searchCarPhoto(car.getBrand(), car.getModel(), car.getYear())
+        return pexelsClient.searchCarPhoto(car.getBrand(), car.getModel(), car.getYear(), car.getColor())
                 .map(photo -> {
                     car.setImageUrl(photo.src().landscape());
                     car.setImagePhotographer(photo.photographer());
