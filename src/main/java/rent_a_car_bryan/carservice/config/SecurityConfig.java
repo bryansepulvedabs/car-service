@@ -26,10 +26,20 @@ public class SecurityConfig {
                 // Sin token (o vencido) responde 401; con token pero sin permiso, 403
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .authorizeHttpRequests(auth -> auth
+                        // Autos eliminados: lista, ficha y reactivar. Estas tres reglas tienen que ir
+                        // ANTES de GET /api/cars/**, que es publica: si quedaran despues, esa las
+                        // taparia y cualquiera podria listar los autos dados de baja.
+                        .requestMatchers(HttpMethod.GET, "/api/cars/deleted").hasRole("ADMIN")
+                        // Ficha incluyendo eliminados: ADMIN, o rental-service (SERVICE) al armar el
+                        // historial de un arriendo cuyo auto fue dado de baja
+                        .requestMatchers(HttpMethod.GET, "/api/cars/admin/*").hasAnyRole("ADMIN", "SERVICE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/cars/*/restore").hasRole("ADMIN")
                         // Lecturas públicas a propósito: es el catálogo, se puede ver sin cuenta
                         .requestMatchers(HttpMethod.GET, "/api/cars/**").permitAll()
-                        // Cambiar disponibilidad: ADMIN, o rental-service (SERVICE) al crear/finalizar/cancelar un arriendo
-                        .requestMatchers(HttpMethod.PATCH, "/api/cars/*/availability").hasAnyRole("ADMIN", "SERVICE")
+                        // Cambiar disponibilidad (operativo / en mantencion): solo ADMIN.
+                        // rental-service ya no la toca: la disponibilidad por fechas la resuelve el
+                        // con sus propios arriendos.
+                        .requestMatchers(HttpMethod.PATCH, "/api/cars/*/availability").hasRole("ADMIN")
                         // Crear, editar, eliminar autos y refrescar imágenes: solo ADMIN
                         .anyRequest().hasRole("ADMIN")
                 )

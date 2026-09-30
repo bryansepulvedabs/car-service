@@ -41,6 +41,14 @@ public class CarService {
         return toResponseDTO(car);
     }
 
+    // Ficha para el admin: incluye autos dados de baja, para revisar su historial.
+    // La respuesta trae deleted = true cuando corresponde.
+    public CarResponseDTO findByIdIncludingDeleted(Long id) {
+        CarEntity car = carRepository.findAnyById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Auto no encontrado con id : " + id));
+        return toResponseDTO(car);
+    }
+
     public CarResponseDTO findByLicensePLate (String licensePlate){
         CarEntity car = carRepository.findByLicensePlate(licensePlate)
                 .orElseThrow(() -> new ResourceNotFoundException( "Auto no encontrado con patente: " + licensePlate));
@@ -137,6 +145,7 @@ public class CarService {
         dto.setImagePhotographer(car.getImagePhotographer());
         dto.setImagePhotographerUrl(car.getImagePhotographerUrl());
         dto.setImageSourceUrl(car.getImageSourceUrl());
+        dto.setDeleted(Boolean.TRUE.equals(car.getDeleted()));
         return dto;
     }
 

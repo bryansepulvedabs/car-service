@@ -23,7 +23,7 @@ public class CarController {
         return carService.findAll();
     }
 
-    // Autos dados de baja: solo ADMIN (proteger en el SecurityConfig del gateway o del servicio)
+    // Autos dados de baja: solo ADMIN (ver las reglas que hay que agregar al SecurityConfig de car-service)
     @GetMapping("/deleted")
     public List<CarResponseDTO> findAllDeleted(){
         return carService.findAllDeleted();
@@ -32,6 +32,13 @@ public class CarController {
     @GetMapping("/{id}")
     public CarResponseDTO findById(@PathVariable Long id){
         return carService.findById(id);
+    }
+
+    // Ficha incluyendo eliminados, para revisar su historial. ADMIN, o rental-service
+    // (rol SERVICE) al armar el historial de un arriendo cuyo auto fue dado de baja.
+    @GetMapping("/admin/{id}")
+    public CarResponseDTO findByIdIncludingDeleted(@PathVariable Long id){
+        return carService.findByIdIncludingDeleted(id);
     }
 
     @GetMapping("/plate/{licensePlate}")

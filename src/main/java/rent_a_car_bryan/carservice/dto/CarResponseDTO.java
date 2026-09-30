@@ -23,4 +23,6 @@ public class CarResponseDTO {
     private String imagePhotographer;
     private String imagePhotographerUrl;
     private String imageSourceUrl;
+    private Boolean deleted;
+
 }

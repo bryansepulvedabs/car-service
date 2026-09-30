@@ -22,6 +22,10 @@ public interface CarRepository extends JpaRepository<CarEntity, Long> {
     @Query(value = "SELECT * FROM cars WHERE id = :id AND deleted = true", nativeQuery = true)
     Optional<CarEntity> findDeletedById(Long id);
 
+    // Ficha del admin: el auto exista activo o dado de baja.
+    @Query(value = "SELECT * FROM cars WHERE id = :id", nativeQuery = true)
+    Optional<CarEntity> findAnyById(Long id);
+
     @Modifying
     @Query(value = "UPDATE cars SET deleted = false WHERE id = :id AND deleted = true", nativeQuery = true)
     int restoreById(Long id);
