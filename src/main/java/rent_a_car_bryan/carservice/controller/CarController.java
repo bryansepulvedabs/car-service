@@ -3,7 +3,6 @@ package rent_a_car_bryan.carservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rent_a_car_bryan.carservice.dto.CarRequestDTO;
 import rent_a_car_bryan.carservice.dto.CarResponseDTO;
@@ -22,6 +21,12 @@ public class CarController {
     @GetMapping
     public List<CarResponseDTO> findAll(){
         return carService.findAll();
+    }
+
+    // Autos dados de baja: solo ADMIN (proteger en el SecurityConfig del gateway o del servicio)
+    @GetMapping("/deleted")
+    public List<CarResponseDTO> findAllDeleted(){
+        return carService.findAllDeleted();
     }
 
     @GetMapping("/{id}")
@@ -56,6 +61,12 @@ public class CarController {
             @PathVariable Long id,
             @RequestParam boolean available) {
         return carService.updateAvailability(id, available);
+    }
+
+    // Reactivar un auto dado de baja: solo ADMIN
+    @PatchMapping("/{id}/restore")
+    public CarResponseDTO restore(@PathVariable Long id){
+        return carService.restore(id);
     }
 
     // Rellena con fotos de Pexels los autos que no tienen imagen (por ejemplo, los del data.sql)

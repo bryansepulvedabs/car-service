@@ -3,6 +3,7 @@ package rent_a_car_bryan.carservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rent_a_car_bryan.carservice.client.PexelsClient;
 import rent_a_car_bryan.carservice.dto.CarRequestDTO;
 import rent_a_car_bryan.carservice.dto.CarResponseDTO;
@@ -22,6 +23,14 @@ public class CarService {
 
     public List<CarResponseDTO> findAll(){
         return carRepository.findAllByOrderByIdAsc()
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
+    }
+
+    // Autos dados de baja, para que el admin pueda reactivarlos
+    public List<CarResponseDTO> findAllDeleted() {
+        return carRepository.findAllDeleted()
                 .stream()
                 .map(this::toResponseDTO)
                 .toList();
@@ -74,6 +83,19 @@ public class CarService {
     public void deleteById(Long id){
         CarEntity car = findEntityById(id);
         carRepository.deleteById(car.getId());
+    }
+
+    // Reactivar un auto dado de baja. Si la patente fue reasignada mientras estaba
+    // baja, el UPDATE choca con el indice unique y sale como 500 hasta que agregues
+    // un handler de DataIntegrityViolationException a car-service.
+    @Transactional
+    public CarResponseDTO restore(Long id) {
+        CarEntity deleted = carRepository.findDeletedById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Auto no encontrado o no estaba dado de baja: " + id));
+        carRepository.restoreById(id);
+        deleted.setDeleted(false);
+        return toResponseDTO(deleted);
     }
 
     private CarEntity findEntityById(Long id){
