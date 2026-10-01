@@ -71,6 +71,15 @@ public class CarController {
         return carService.updateAvailability(id, available);
     }
 
+    // Actualizar el kilometraje (solo hacia arriba): ADMIN, o rental-service (SERVICE) al
+    // registrar la devolucion de un arriendo
+    @PatchMapping("/{id}/mileage")
+    public CarResponseDTO updateMileage(
+            @PathVariable Long id,
+            @RequestParam("value") Integer value) {
+        return carService.updateMileage(id, value);
+    }
+
     // Reactivar un auto dado de baja: solo ADMIN
     @PatchMapping("/{id}/restore")
     public CarResponseDTO restore(@PathVariable Long id){

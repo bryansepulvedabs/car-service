@@ -8,6 +8,7 @@ import rent_a_car_bryan.carservice.client.PexelsClient;
 import rent_a_car_bryan.carservice.dto.CarRequestDTO;
 import rent_a_car_bryan.carservice.dto.CarResponseDTO;
 import rent_a_car_bryan.carservice.entity.CarEntity;
+import rent_a_car_bryan.carservice.exception.InvalidCarOperationException;
 import rent_a_car_bryan.carservice.exception.ResourceNotFoundException;
 import rent_a_car_bryan.carservice.repository.CarRepository;
 
@@ -154,6 +155,25 @@ public class CarService {
         car.setAvailability(available);
         CarEntity updatedCar = carRepository.save(car);
         return toResponseDTO(updatedCar);
+    }
+
+    // Actualiza el kilometraje global del auto. Lo llama rental-service (rol SERVICE) al
+    // registrar la devolucion, y el ADMIN si necesita corregirlo.
+    // El kilometraje NUNCA baja: un valor menor al actual es un error de tipeo, no una lectura.
+    // Usa findAnyById para que tambien funcione si el auto fue dado de baja con un arriendo abierto.
+    @Transactional
+    public CarResponseDTO updateMileage(Long id, int mileage) {
+        CarEntity car = carRepository.findAnyById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Auto no encontrado con id : " + id));
+        if (mileage < 0) {
+            throw new InvalidCarOperationException("El kilometraje no puede ser negativo");
+        }
+        if (mileage < car.getMileage()) {
+            throw new InvalidCarOperationException(
+                    "El kilometraje no puede ser menor al actual (" + car.getMileage() + " km)");
+        }
+        car.setMileage(mileage);
+        return toResponseDTO(carRepository.save(car));
     }
 
     /**

@@ -36,6 +36,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/cars/*/restore").hasRole("ADMIN")
                         // Lecturas públicas a propósito: es el catálogo, se puede ver sin cuenta
                         .requestMatchers(HttpMethod.GET, "/api/cars/**").permitAll()
+                        // Kilometraje: ADMIN, o rental-service (SERVICE) al registrar la devolucion
+                        .requestMatchers(HttpMethod.PATCH, "/api/cars/*/mileage").hasAnyRole("ADMIN", "SERVICE")
                         // Cambiar disponibilidad (operativo / en mantencion): solo ADMIN.
                         // rental-service ya no la toca: la disponibilidad por fechas la resuelve el
                         // con sus propios arriendos.

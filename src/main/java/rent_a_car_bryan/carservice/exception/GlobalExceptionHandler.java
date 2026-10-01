@@ -31,6 +31,12 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, "Conflict", "Ya existe un auto con esa patente");
     }
 
+    // Operacion invalida sobre un auto (ej. intentar bajar el kilometraje)
+    @ExceptionHandler(InvalidCarOperationException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCarOperation(InvalidCarOperationException ex) {
+        return build(HttpStatus.BAD_REQUEST, "Bad Request", ex.getMessage());
+    }
+
     // Bean Validation: los mensajes ya estan escritos en los DTO, asi que se devuelven tal cual
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
