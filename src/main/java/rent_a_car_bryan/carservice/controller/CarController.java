@@ -1,6 +1,7 @@
 package rent_a_car_bryan.carservice.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -48,12 +49,12 @@ public class CarController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CarResponseDTO create(@RequestBody CarRequestDTO car){
+    public CarResponseDTO create(@Valid @RequestBody CarRequestDTO car){
         return carService.save(car);
     }
 
     @PutMapping("/{id}")
-    public CarResponseDTO update(@PathVariable Long id, @RequestBody CarRequestDTO carUpdate){
+    public CarResponseDTO update(@PathVariable Long id, @Valid @RequestBody CarRequestDTO carUpdate){
         return carService.update(id, carUpdate);
     }
 
